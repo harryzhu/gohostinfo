@@ -41,8 +41,13 @@ func DefaultHostinfo() *Hostinfo {
 	return hinfo
 }
 
+func PrintLine(t string) {
+	fmt.Println("=======", t, "=======")
+}
+
 func GetHost() {
 	h, _ := host.Info()
+	PrintLine("Host")
 	fmt.Println(h)
 
 	Hinfo.Id = h.Hostname
@@ -54,14 +59,16 @@ func GetMemory() {
 	sm, _ := mem.SwapMemory()
 	Hinfo.Data["virtual_memory"] = vm
 	Hinfo.Data["swap_memory"] = sm
+	PrintLine("VirtualMemory")
 	fmt.Println(vm)
+	PrintLine("SwapMemory")
 	fmt.Println(sm)
 }
 
 func GetCPU() {
 	c, _ := cpu.Info()
 	Hinfo.Data["cpu"] = c
-
+	PrintLine("CPU")
 	fmt.Println(c)
 }
 
@@ -81,5 +88,6 @@ func GetDisk() {
 		}
 	}
 	Hinfo.Data["disk"] = du
+	PrintLine("Disk")
 	fmt.Println(du)
 }
