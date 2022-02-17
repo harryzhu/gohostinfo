@@ -22,12 +22,15 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("collect called")
+
+		WalkOneByOne()
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(collectCmd)
-
+	collectCmd.Flags().StringVar(&IDC, "idc", "", "idc")
+	collectCmd.MarkFlagRequired("idc")
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
