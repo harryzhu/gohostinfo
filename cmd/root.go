@@ -13,6 +13,7 @@ import (
 var (
 	IDC        string
 	WithDocker bool
+	File       string
 )
 
 // rootCmd represents the base command when called without any subcommands

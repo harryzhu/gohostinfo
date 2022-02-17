@@ -25,7 +25,9 @@ var collectCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(collectCmd)
 	collectCmd.Flags().StringVar(&IDC, "idc", "", "--idc=us-east-01")
+	collectCmd.Flags().StringVar(&File, "file", "gohostinfo.json", "--file=gohostinfo.json")
 	collectCmd.Flags().BoolVar(&WithDocker, "withdocker", false, "--withdocker=true|false")
+
 	collectCmd.MarkFlagRequired("idc")
 	// Here you will define your flags and configuration settings.
 

@@ -57,7 +57,7 @@ func WalkOneByOne() {
 	} else {
 		fmt.Println("======= Final Result =======")
 		fmt.Println(string(json_hinfo))
-		ioutil.WriteFile("gohostinfo.json", json_hinfo, 0755)
+		ioutil.WriteFile(File, json_hinfo, 0755)
 	}
 }
 
