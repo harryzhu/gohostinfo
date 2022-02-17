@@ -21,10 +21,12 @@ func init() {
 }
 
 type Hostinfo struct {
-	Id   string                 `json:"_id"`
-	Time int64                  `json:"time"`
-	IDC  string                 `json:"idc"`
-	Data map[string]interface{} `json:"data"`
+	Id    string                 `json:"_id"`
+	Time  int64                  `json:"time"`
+	IDC   string                 `json:"idc"`
+	Group string                 `json:"group"`
+	Tags  []string               `json:"tags"`
+	Data  map[string]interface{} `json:"data"`
 }
 
 var Hinfo *Hostinfo
@@ -34,14 +36,14 @@ func DefaultHostinfo() *Hostinfo {
 	hinfo.Id = "pls-set-your-key"
 	hinfo.Time = time.Now().Unix()
 
-	data := make(map[string]interface{}, 10)
-	data["cpu"] = ""
+	data := make(map[string]interface{}, 5)
 	hinfo.Data = data
 	return hinfo
 }
 
 func WalkOneByOne() {
-	SetIDC()
+	SetKey()
+	SetTags()
 	GetHost()
 	GetCPU()
 	GetMemory()
@@ -57,7 +59,12 @@ func WalkOneByOne() {
 	} else {
 		fmt.Println("======= Final Result =======")
 		fmt.Println(string(json_hinfo))
-		ioutil.WriteFile(File, json_hinfo, 0755)
+		err := ioutil.WriteFile(File, json_hinfo, 0755)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("OK. Result was saved in: ", File)
+		}
 	}
 }
 
@@ -65,8 +72,31 @@ func PrintLine(t string) {
 	fmt.Println("=======", t, "=======")
 }
 
-func SetIDC() {
+func SetKey() {
 	Hinfo.IDC = IDC
+	Hinfo.Group = Group
+}
+
+func SetTags() {
+	var arr_tags []string
+	if Tags != "" {
+		Tags = strings.ReplaceAll(Tags, ",", ";")
+		Tags = strings.ReplaceAll(Tags, " ", "-")
+		Tags = strings.Trim(Tags, ";")
+
+		tags := strings.Split(Tags, ";")
+		for _, tag := range tags {
+			if tag != "" {
+				arr_tags = append(arr_tags, tag)
+			}
+		}
+	}
+
+	if len(arr_tags) == 0 {
+		arr_tags = []string{}
+	}
+
+	Hinfo.Tags = arr_tags
 }
 
 func GetHost() {
@@ -75,7 +105,7 @@ func GetHost() {
 		panic("cannot get the hostname, will abort")
 	}
 
-	Hinfo.Id = strings.ToLower(strings.Join([]string{"gohostinfo-", h.Hostname}, "-"))
+	Hinfo.Id = strings.ToLower(strings.Join([]string{"gohostinfo", h.Hostname}, "-"))
 	Hinfo.Data["host"] = h
 
 	PrintLine("Host")

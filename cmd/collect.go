@@ -26,16 +26,11 @@ func init() {
 	rootCmd.AddCommand(collectCmd)
 	collectCmd.Flags().StringVar(&IDC, "idc", "", "--idc=us-east-01")
 	collectCmd.Flags().StringVar(&File, "file", "gohostinfo.json", "--file=gohostinfo.json")
+	collectCmd.Flags().StringVar(&Group, "group", "", "--group=")
+	collectCmd.Flags().StringVar(&Tags, "tags", "", "--tag=tag1,tag2,tag3")
+
 	collectCmd.Flags().BoolVar(&WithDocker, "withdocker", false, "--withdocker=true|false")
 
 	collectCmd.MarkFlagRequired("idc")
-	// Here you will define your flags and configuration settings.
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// collectCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// collectCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

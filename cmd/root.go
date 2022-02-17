@@ -14,6 +14,8 @@ var (
 	IDC        string
 	WithDocker bool
 	File       string
+	Group      string
+	Tags       string
 )
 
 // rootCmd represents the base command when called without any subcommands
