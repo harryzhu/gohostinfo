@@ -27,7 +27,7 @@ func init() {
 	collectCmd.Flags().StringVar(&IDC, "idc", "", "--idc=us-east-01")
 	collectCmd.Flags().StringVar(&File, "file", "gohostinfo.json", "--file=gohostinfo.json")
 	collectCmd.Flags().StringVar(&Group, "group", "", "--group=")
-	collectCmd.Flags().StringVar(&Tags, "tags", "", "--tag=tag1,tag2,tag3")
+	collectCmd.Flags().StringVar(&Tags, "tags", "", "--tags=\"tag1;tag2;tag3\"")
 
 	collectCmd.Flags().BoolVar(&WithDocker, "withdocker", false, "--withdocker=true|false")
 
