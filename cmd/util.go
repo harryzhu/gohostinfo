@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+
 	"strings"
 	"time"
 
@@ -29,7 +30,9 @@ type Hostinfo struct {
 	Data  map[string]interface{} `json:"data"`
 }
 
-var Hinfo *Hostinfo
+var (
+	Hinfo *Hostinfo
+)
 
 func DefaultHostinfo() *Hostinfo {
 	hinfo := &Hostinfo{}
@@ -134,7 +137,6 @@ func GetDisk() {
 	du := []*disk.UsageStat{}
 	partitions, _ := disk.Partitions(true)
 	for _, p := range partitions {
-		//fmt.Println(p)
 		if p.Mountpoint != "" {
 			pu, err := disk.Usage(p.Mountpoint)
 			if err != nil {
