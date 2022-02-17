@@ -21,7 +21,7 @@ func init() {
 }
 
 type Hostinfo struct {
-	Id    string                 `json:"_id"`
+	ID    string                 `json:"_id"`
 	Time  int64                  `json:"time"`
 	IDC   string                 `json:"idc"`
 	Group string                 `json:"group"`
@@ -33,7 +33,7 @@ var Hinfo *Hostinfo
 
 func DefaultHostinfo() *Hostinfo {
 	hinfo := &Hostinfo{}
-	hinfo.Id = "pls-set-your-key"
+	hinfo.ID = "pls-set-your-key"
 	hinfo.Time = time.Now().Unix()
 
 	data := make(map[string]interface{}, 5)
@@ -105,7 +105,7 @@ func GetHost() {
 		panic("cannot get the hostname, will abort")
 	}
 
-	Hinfo.Id = strings.ToLower(strings.Join([]string{"gohostinfo", h.Hostname}, "-"))
+	Hinfo.ID = strings.ToLower(strings.Join([]string{"gohostinfo", h.Hostname}, "-"))
 	Hinfo.Data["host"] = h
 
 	PrintLine("Host")
