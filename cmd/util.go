@@ -53,13 +53,13 @@ func WalkOneByOne() {
 		GetDocker()
 	}
 
-	json_hinfo, err := json.Marshal(Hinfo)
+	jsonHinfo, err := json.Marshal(Hinfo)
 	if err != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Println("======= Final Result =======")
-		fmt.Println(string(json_hinfo))
-		err := ioutil.WriteFile(File, json_hinfo, 0755)
+		fmt.Println(string(jsonHinfo))
+		err := ioutil.WriteFile(File, jsonHinfo, 0755)
 		if err != nil {
 			fmt.Println(err)
 		} else {
@@ -73,12 +73,12 @@ func PrintLine(t string) {
 }
 
 func SetKey() {
-	Hinfo.IDC = IDC
-	Hinfo.Group = Group
+	Hinfo.IDC = strings.ToLower(IDC)
+	Hinfo.Group = strings.ToLower(Group)
 }
 
 func SetTags() {
-	var arr_tags []string
+	var arrTags []string
 	if Tags != "" {
 		Tags = strings.ReplaceAll(Tags, ",", ";")
 		Tags = strings.ReplaceAll(Tags, " ", "-")
@@ -87,16 +87,16 @@ func SetTags() {
 		tags := strings.Split(Tags, ";")
 		for _, tag := range tags {
 			if tag != "" {
-				arr_tags = append(arr_tags, tag)
+				arrTags = append(arrTags, strings.ToLower(tag))
 			}
 		}
 	}
 
-	if len(arr_tags) == 0 {
-		arr_tags = []string{}
+	if len(arrTags) == 0 {
+		arrTags = []string{}
 	}
 
-	Hinfo.Tags = arr_tags
+	Hinfo.Tags = arrTags
 }
 
 func GetHost() {
