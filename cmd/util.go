@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"strings"
 	"time"
 
 	"github.com/shirou/gopsutil/v3/cpu"
@@ -12,7 +13,6 @@ import (
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
 	"github.com/shirou/gopsutil/v3/net"
-	"github.com/shirou/gopsutil/v3/winservices"
 )
 
 func init() {
@@ -22,7 +22,6 @@ func init() {
 
 type Hostinfo struct {
 	Id   string                 `json:"_id"`
-	Rev  string                 `json:"_rev"`
 	Time int64                  `json:"time"`
 	IDC  string                 `json:"idc"`
 	Data map[string]interface{} `json:"data"`
@@ -48,8 +47,9 @@ func WalkOneByOne() {
 	GetMemory()
 	GetDisk()
 	GetNet()
-	GetDocker()
-	GetWinservices()
+	if WithDocker {
+		GetDocker()
+	}
 
 	json_hinfo, err := json.Marshal(Hinfo)
 	if err != nil {
@@ -70,12 +70,16 @@ func SetIDC() {
 }
 
 func GetHost() {
-	h, _ := host.Info()
+	h, err := host.Info()
+	if err != nil {
+		panic("cannot get the hostname, will abort")
+	}
+
+	Hinfo.Id = strings.ToLower(strings.Join([]string{"gohostinfo-", h.Hostname}, "-"))
+	Hinfo.Data["host"] = h
+
 	PrintLine("Host")
 	fmt.Println(h)
-
-	Hinfo.Id = h.Hostname
-	Hinfo.Data["host"] = h
 }
 
 func GetMemory() {
@@ -136,15 +140,4 @@ func GetDocker() {
 	Hinfo.Data["docker"] = dkrs
 	PrintLine("Docker")
 	fmt.Println(dkrs)
-}
-
-func GetWinservices() {
-	w, err := winservices.ListServices()
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	Hinfo.Data["winservice"] = w
-	PrintLine("Winservice")
-	fmt.Println(w)
 }

@@ -13,15 +13,10 @@ import (
 // collectCmd represents the collect command
 var collectCmd = &cobra.Command{
 	Use:   "collect",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "gohostinfo collect --idc=us-east-01",
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("collect called")
+		fmt.Println("collect is beginning ...")
 
 		WalkOneByOne()
 	},
@@ -29,7 +24,8 @@ to quickly create a Cobra application.`,
 
 func init() {
 	rootCmd.AddCommand(collectCmd)
-	collectCmd.Flags().StringVar(&IDC, "idc", "", "idc")
+	collectCmd.Flags().StringVar(&IDC, "idc", "", "--idc=us-east-01")
+	collectCmd.Flags().BoolVar(&WithDocker, "withdocker", false, "--withdocker=true|false")
 	collectCmd.MarkFlagRequired("idc")
 	// Here you will define your flags and configuration settings.
 
