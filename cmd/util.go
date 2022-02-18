@@ -128,14 +128,16 @@ func LoadMiscDirV2(pth string) error {
 			kv := strings.Split(line, "=")
 			if len(kv) == 2 {
 				if kv[0] != "" && kv[1] != "" {
-					log.Println(i, ")", kv[0], " = ", kv[1])
 					k := strings.Trim(kv[0], " ")
 					v := strings.Trim(kv[1], " ")
+					log.Printf("%v)%v=%v", i, k, v)
+					log.Println("i.e.: sn=[{\"number\":\"CNG6F8FH\"}]")
 
 					var data []map[string]interface{}
 					err := json.Unmarshal([]byte(v), &data)
 					if err != nil {
 						log.Println(err)
+
 						continue
 					}
 
