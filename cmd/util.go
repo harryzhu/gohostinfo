@@ -127,7 +127,7 @@ func LoadMiscDirV2(pth string) error {
 
 			kv := strings.Split(line, "=")
 			if len(kv) == 2 {
-				if kv[0] != "" {
+				if kv[0] != "" && kv[1] != "" {
 					log.Println(i, ")", kv[0], " = ", kv[1])
 					k := strings.Trim(kv[0], " ")
 					v := strings.Trim(kv[1], " ")
