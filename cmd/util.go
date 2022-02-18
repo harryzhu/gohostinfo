@@ -120,15 +120,17 @@ func LoadMiscDirV2(pth string) error {
 		content := strings.ReplaceAll(string(cnt), "\r\n", "\n")
 		lines := strings.Split(content, "\n")
 		for i, line := range lines {
+			line = strings.Trim(line, " ")
+			if strings.Index(line, "#") == 0 {
+				continue
+			}
+
 			kv := strings.Split(line, "=")
 			if len(kv) == 2 {
 				if kv[0] != "" {
 					log.Println(i, ")", kv[0], " = ", kv[1])
 					k := strings.Trim(kv[0], " ")
 					v := strings.Trim(kv[1], " ")
-					if strings.Index(k, "#") == 0 {
-						continue
-					}
 
 					var data []map[string]interface{}
 					err := json.Unmarshal([]byte(v), &data)
