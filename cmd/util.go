@@ -63,7 +63,10 @@ func WalkOneByOne() {
 		fmt.Println(err)
 	} else {
 		fmt.Println("======= Final Result =======")
-		fmt.Println(string(jsonHinfo))
+		if Quiet != true {
+			fmt.Println(string(jsonHinfo))
+		}
+
 		err := ioutil.WriteFile(File, jsonHinfo, 0755)
 		if err != nil {
 			fmt.Println(err)
