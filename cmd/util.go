@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -55,6 +56,7 @@ func WalkOneByOne() {
 	if WithDocker {
 		GetDocker()
 	}
+	LoadVendorDir("misc")
 
 	jsonHinfo, err := json.Marshal(Hinfo)
 	if err != nil {
@@ -73,6 +75,52 @@ func WalkOneByOne() {
 
 func PrintLine(t string) {
 	fmt.Println("=======", t, "=======")
+}
+
+func LoadVendorDir(pth string) error {
+	PrintLine("LoadVendorDir")
+	err := filepath.Walk(pth, func(pth string, f os.FileInfo, err error) error {
+		if f == nil {
+			return err
+		}
+		if f.IsDir() {
+			return nil
+		}
+		if filepath.Ext(pth) != ".txt" {
+			return nil
+		}
+
+		if strings.Index(filepath.Base(pth), "gohostinfo") == -1 {
+			return nil
+		}
+		fmt.Println("checking: ", pth)
+		cnt, err := ioutil.ReadFile(pth)
+		if err != nil {
+			fmt.Println(err)
+		}
+		content := strings.ReplaceAll(string(cnt), "\r\n", "\n")
+		lines := strings.Split(content, "\n")
+		for i, line := range lines {
+			kv := strings.Split(line, "=")
+			if len(kv) == 2 {
+				if kv[0] != "" {
+					fmt.Println(i, ")", kv[0], " = ", kv[1])
+					k := strings.Trim(kv[0], " ")
+					v := strings.Trim(kv[1], " ")
+					if strings.Index(k, "#") == 0 {
+						continue
+					}
+					Hinfo.Data[k] = v
+				}
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	return err
 }
 
 func SetKey() {
