@@ -17,7 +17,16 @@ import (
 	"github.com/shirou/gopsutil/v3/net"
 )
 
+var APPROOT string = "."
+
 func init() {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		APPROOT = dir
+	}
+	fmt.Println("APPROOT: ", APPROOT)
 	Hinfo = DefaultHostinfo()
 
 }
@@ -56,7 +65,7 @@ func WalkOneByOne() {
 	if WithDocker {
 		GetDocker()
 	}
-	LoadMiscDir("misc")
+	LoadMiscDir(filepath.Join(APPROOT, "misc"))
 
 	jsonHinfo, err := json.Marshal(Hinfo)
 	if err != nil {
@@ -81,7 +90,7 @@ func PrintLine(t string) {
 }
 
 func LoadMiscDir(pth string) error {
-	PrintLine("LoadMiscDir")
+	PrintLine("LoadMiscDir: " + pth)
 	err := filepath.Walk(pth, func(pth string, f os.FileInfo, err error) error {
 		if f == nil {
 			return err
