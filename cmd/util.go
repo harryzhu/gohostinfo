@@ -71,7 +71,8 @@ func WalkOneByOne() {
 	if err != nil {
 		miscPath = filepath.Join(APPROOT, "misc")
 	}
-	LoadMiscDir(miscPath)
+	//LoadMiscDir(miscPath)
+	LoadMiscDirV2(miscPath)
 
 	jsonHinfo, err := json.Marshal(Hinfo)
 	if err != nil {
@@ -93,6 +94,60 @@ func Echo(title string, t interface{}) {
 	if Quiet != true {
 		log.Println(t)
 	}
+}
+
+func LoadMiscDirV2(pth string) error {
+	err := filepath.Walk(pth, func(pth string, f os.FileInfo, err error) error {
+		if f == nil {
+			return err
+		}
+		if f.IsDir() {
+			return nil
+		}
+		if filepath.Ext(pth) != ".txt" {
+			return nil
+		}
+
+		if strings.Index(filepath.Base(pth), "gohostinfo") == -1 {
+			return nil
+		}
+		log.Println("checking: ", pth)
+		cnt, err := ioutil.ReadFile(pth)
+		if err != nil {
+			log.Println(err)
+		}
+
+		content := strings.ReplaceAll(string(cnt), "\r\n", "\n")
+		lines := strings.Split(content, "\n")
+		for i, line := range lines {
+			kv := strings.Split(line, "=")
+			if len(kv) == 2 {
+				if kv[0] != "" {
+					log.Println(i, ")", kv[0], " = ", kv[1])
+					k := strings.Trim(kv[0], " ")
+					v := strings.Trim(kv[1], " ")
+					if strings.Index(k, "#") == 0 {
+						continue
+					}
+
+					var data []map[string]interface{}
+					err := json.Unmarshal([]byte(v), &data)
+					if err != nil {
+						log.Println(err)
+						continue
+					}
+
+					Hinfo.Data[k] = data
+				}
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
+		log.Println(err)
+	}
+	return err
 }
 
 func LoadMiscDir(pth string) error {
