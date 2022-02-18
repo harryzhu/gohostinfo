@@ -5,8 +5,6 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -16,8 +14,6 @@ var collectCmd = &cobra.Command{
 	Short: "gohostinfo collect --idc=us-east-01",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("collect is beginning ...")
-
 		WalkOneByOne()
 	},
 }

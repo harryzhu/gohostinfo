@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -22,11 +22,11 @@ var APPROOT string = "."
 func init() {
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	} else {
 		APPROOT = dir
 	}
-	fmt.Println("APPROOT: ", APPROOT)
+	log.Println("APPROOT: ", APPROOT)
 	Hinfo = DefaultHostinfo()
 
 }
@@ -65,32 +65,38 @@ func WalkOneByOne() {
 	if WithDocker {
 		GetDocker()
 	}
-	LoadMiscDir(filepath.Join(APPROOT, "misc"))
+
+	miscPath := "misc"
+	_, err := os.Stat(miscPath)
+	if err != nil {
+		miscPath = filepath.Join(APPROOT, "misc")
+	}
+	LoadMiscDir(miscPath)
 
 	jsonHinfo, err := json.Marshal(Hinfo)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	} else {
-		fmt.Println("======= Final Result =======")
-		if Quiet != true {
-			fmt.Println(string(jsonHinfo))
-		}
+		Echo("Final Result", string(jsonHinfo))
 
 		err := ioutil.WriteFile(File, jsonHinfo, 0755)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		} else {
-			fmt.Println("OK. Result was saved in: ", File)
+			log.Println("OK. Result was saved in: ", File)
 		}
 	}
 }
 
-func PrintLine(t string) {
-	fmt.Println("=======", t, "=======")
+func Echo(title string, t interface{}) {
+	log.Println("=======", title, "=======")
+	if Quiet != true {
+		log.Println(t)
+	}
 }
 
 func LoadMiscDir(pth string) error {
-	PrintLine("LoadMiscDir: " + pth)
+	Echo("LoadMiscDir", pth)
 	err := filepath.Walk(pth, func(pth string, f os.FileInfo, err error) error {
 		if f == nil {
 			return err
@@ -105,10 +111,10 @@ func LoadMiscDir(pth string) error {
 		if strings.Index(filepath.Base(pth), "gohostinfo") == -1 {
 			return nil
 		}
-		fmt.Println("checking: ", pth)
+		log.Println("checking: ", pth)
 		cnt, err := ioutil.ReadFile(pth)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		content := strings.ReplaceAll(string(cnt), "\r\n", "\n")
 		lines := strings.Split(content, "\n")
@@ -116,7 +122,7 @@ func LoadMiscDir(pth string) error {
 			kv := strings.Split(line, "=")
 			if len(kv) == 2 {
 				if kv[0] != "" {
-					fmt.Println(i, ")", kv[0], " = ", kv[1])
+					log.Println(i, ")", kv[0], " = ", kv[1])
 					k := strings.Trim(kv[0], " ")
 					v := strings.Trim(kv[1], " ")
 					if strings.Index(k, "#") == 0 {
@@ -130,7 +136,7 @@ func LoadMiscDir(pth string) error {
 		return nil
 	})
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	return err
 }
@@ -165,16 +171,14 @@ func SetTags() {
 func GetHost() {
 	h, err := host.Info()
 	if err != nil {
-		panic("cannot get the hostname, will abort")
+		log.Fatal("cannot get the hostname, will abort")
 	}
 
 	Hinfo.ID = strings.ToLower(strings.Join([]string{"gohostinfo", h.Hostname}, "-"))
 	Hinfo.Data["host"] = h
 
-	PrintLine("Host")
-	if Quiet != true {
-		fmt.Println(h)
-	}
+	log.Println(Hinfo.ID)
+	Echo("Host", h)
 }
 
 func GetMemory() {
@@ -182,23 +186,14 @@ func GetMemory() {
 	sm, _ := mem.SwapMemory()
 	Hinfo.Data["virtual_memory"] = vm
 	Hinfo.Data["swap_memory"] = sm
-	PrintLine("VirtualMemory")
-	if Quiet != true {
-		fmt.Println(vm)
-	}
-	PrintLine("SwapMemory")
-	if Quiet != true {
-		fmt.Println(sm)
-	}
+	Echo("VirtualMemory", vm)
+	Echo("SwapMemory", sm)
 }
 
 func GetCPU() {
 	c, _ := cpu.Info()
 	Hinfo.Data["cpu"] = c
-	PrintLine("CPU")
-	if Quiet != true {
-		fmt.Println(c)
-	}
+	Echo("CPU", c)
 }
 
 func GetDisk() {
@@ -208,7 +203,7 @@ func GetDisk() {
 		if p.Mountpoint != "" {
 			pu, err := disk.Usage(p.Mountpoint)
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 			} else {
 				du = append(du, pu)
 			}
@@ -216,34 +211,28 @@ func GetDisk() {
 		}
 	}
 	Hinfo.Data["disk"] = du
-	PrintLine("Disk")
-	if Quiet != true {
-		fmt.Println(du)
-	}
+
+	Echo("Disk", du)
 }
 
 func GetNet() {
 	i, err := net.Interfaces()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	Hinfo.Data["net"] = i
-	PrintLine("Net")
-	if Quiet != true {
-		fmt.Println(i)
-	}
+
+	Echo("Net", i)
 }
 
 func GetDocker() {
 	dkrs, err := docker.GetDockerStat()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	Hinfo.Data["docker"] = dkrs
-	PrintLine("Docker")
-	if Quiet != true {
-		fmt.Println(dkrs)
-	}
+
+	Echo("Docker", dkrs)
 }
