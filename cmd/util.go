@@ -56,7 +56,7 @@ func WalkOneByOne() {
 	if WithDocker {
 		GetDocker()
 	}
-	LoadVendorDir("misc")
+	LoadMiscDir("misc")
 
 	jsonHinfo, err := json.Marshal(Hinfo)
 	if err != nil {
@@ -77,8 +77,8 @@ func PrintLine(t string) {
 	fmt.Println("=======", t, "=======")
 }
 
-func LoadVendorDir(pth string) error {
-	PrintLine("LoadVendorDir")
+func LoadMiscDir(pth string) error {
+	PrintLine("LoadMiscDir")
 	err := filepath.Walk(pth, func(pth string, f os.FileInfo, err error) error {
 		if f == nil {
 			return err
