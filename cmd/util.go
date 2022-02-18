@@ -197,7 +197,7 @@ func GetCPU() {
 }
 
 func GetDisk() {
-	du := []*disk.UsageStat{}
+	diskStat := []*disk.UsageStat{}
 	almostFullDisks := []*disk.UsageStat{}
 	partitions, _ := disk.Partitions(true)
 	for _, p := range partitions {
@@ -206,7 +206,7 @@ func GetDisk() {
 			if err != nil {
 				log.Println(err)
 			} else {
-				du = append(du, pu)
+				diskStat = append(diskStat, pu)
 				if pu.UsedPercent > 80 {
 					almostFullDisks = append(almostFullDisks, pu)
 				}
@@ -214,10 +214,10 @@ func GetDisk() {
 
 		}
 	}
-	Hinfo.Data["disk"] = du
+	Hinfo.Data["disk"] = diskStat
 	Hinfo.Data["disk_full"] = almostFullDisks
 
-	Echo("Disk", du)
+	Echo("Disk", diskStat)
 	log.Println(almostFullDisks)
 }
 
