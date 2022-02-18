@@ -163,7 +163,9 @@ func GetHost() {
 	Hinfo.Data["host"] = h
 
 	PrintLine("Host")
-	fmt.Println(h)
+	if Quiet != true {
+		fmt.Println(h)
+	}
 }
 
 func GetMemory() {
@@ -172,16 +174,22 @@ func GetMemory() {
 	Hinfo.Data["virtual_memory"] = vm
 	Hinfo.Data["swap_memory"] = sm
 	PrintLine("VirtualMemory")
-	fmt.Println(vm)
+	if Quiet != true {
+		fmt.Println(vm)
+	}
 	PrintLine("SwapMemory")
-	fmt.Println(sm)
+	if Quiet != true {
+		fmt.Println(sm)
+	}
 }
 
 func GetCPU() {
 	c, _ := cpu.Info()
 	Hinfo.Data["cpu"] = c
 	PrintLine("CPU")
-	fmt.Println(c)
+	if Quiet != true {
+		fmt.Println(c)
+	}
 }
 
 func GetDisk() {
@@ -200,7 +208,9 @@ func GetDisk() {
 	}
 	Hinfo.Data["disk"] = du
 	PrintLine("Disk")
-	fmt.Println(du)
+	if Quiet != true {
+		fmt.Println(du)
+	}
 }
 
 func GetNet() {
@@ -211,7 +221,9 @@ func GetNet() {
 
 	Hinfo.Data["net"] = i
 	PrintLine("Net")
-	fmt.Println(i)
+	if Quiet != true {
+		fmt.Println(i)
+	}
 }
 
 func GetDocker() {
@@ -222,5 +234,7 @@ func GetDocker() {
 
 	Hinfo.Data["docker"] = dkrs
 	PrintLine("Docker")
-	fmt.Println(dkrs)
+	if Quiet != true {
+		fmt.Println(dkrs)
+	}
 }
