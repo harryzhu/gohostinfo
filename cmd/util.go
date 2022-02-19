@@ -260,11 +260,26 @@ func GetSerialNumber() {
 	var serialNumber string
 	switch plt {
 	case "windows":
-		cmdWin := exec.Command("wmic", "baseboard", "get", "serialnumber")
-		cmdOutput := cmdWin.CombinedOutput()
-		log.Println(string(cmdOutput))
-	case "darwin":
+		c1 := exec.Command("wmic", "bios", "get", "serialnumber")
+		var stdout, stderr bytes.Buffer
+		c1.Stdout = &stdout
+		c1.Stderr = &stderr
+		c1run := c1.Run()
+		if c1run == nil {
+			strCmdOutput := strings.ToUpper(string(stdout.Bytes()))
+			strCmdOutput = strings.ReplaceAll(strCmdOutput, "SERIALNUMBER", "")
+			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\r\n", "\n")
+			arrCmdOutput := strings.Split(strCmdOutput, "\n")
 
+			for _, v := range arrCmdOutput {
+				if v != "" && len(v) > 3 {
+					serialNumber = v
+					break
+				}
+			}
+		}
+
+	case "darwin":
 		c1 := exec.Command("system_profiler", "SPHardwareDataType")
 		c2 := exec.Command("grep", "Serial")
 		c2.Stdin, _ = c1.StdoutPipe()
@@ -290,6 +305,6 @@ func GetSerialNumber() {
 		log.Println("cannot detect the platform")
 	}
 
-	log.Println(cmdOutput)
+	log.Println("--", serialNumber)
 
 }
