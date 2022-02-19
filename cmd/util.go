@@ -257,11 +257,12 @@ func GetDocker() {
 func GetSerialNumber() {
 	plt := runtime.GOOS
 	log.Println(plt)
-	var cmdOutput *exec.Cmd
 	var serialNumber string
 	switch plt {
 	case "windows":
-		cmdOutput = exec.Command("wmic", "baseboard", "get", "serialnumber")
+		cmdWin := exec.Command("wmic", "baseboard", "get", "serialnumber")
+		cmdOutput := cmdWin.CombinedOutput()
+		log.Println(string(cmdOutput))
 	case "darwin":
 
 		c1 := exec.Command("system_profiler", "SPHardwareDataType")
