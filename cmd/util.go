@@ -45,13 +45,14 @@ var (
 )
 
 func DefaultHostinfo() *Hostinfo {
-	hinfo := &Hostinfo{}
-	hinfo.ID = "pls-set-your-key"
-	hinfo.Time = time.Now().Unix()
-
-	data := make(map[string]interface{}, 5)
-	hinfo.Data = data
-	return hinfo
+	return &Hostinfo{
+		ID:    "pls-set-your-key",
+		Time:  time.Now().Unix(),
+		IDC:   "",
+		Group: "",
+		Tags:  []string{},
+		Data:  make(map[string]interface{}, 5),
+	}
 }
 
 func WalkOneByOne() {
@@ -79,8 +80,6 @@ func WalkOneByOne() {
 	if err != nil {
 		log.Println(err)
 	} else {
-		Echo("Final Result", string(jsonHinfo))
-
 		err := ioutil.WriteFile(File, jsonHinfo, 0755)
 		if err != nil {
 			log.Println(err)
@@ -105,8 +104,8 @@ func LoadMiscDir(pth string) error {
 	{"key1":[{"k11":"val11"},{"k12":"val12"}],"key2":[{"k21":"val21"}]}
 	they will be added into final result:
 	  result["data"]["key1"]=[{"k11":"val11"},{"k12":"val12"}]
-	  result["data"]["key2"]=[{"k21":"val21"}]
-	`
+	  result["data"]["key2"]=[{"k21":"val21"}]`
+
 	Echo("LoadMiscDir", miscNotice)
 
 	err := filepath.Walk(pth, func(pth string, f os.FileInfo, err error) error {
