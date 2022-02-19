@@ -256,7 +256,6 @@ func GetDocker() {
 
 func GetSerialNumber() {
 	plt := runtime.GOOS
-	log.Println(plt)
 	var serialNumber string
 	switch plt {
 	case "windows":
@@ -268,7 +267,7 @@ func GetSerialNumber() {
 		if c1run == nil {
 			strCmdOutput := strings.ToUpper(string(stdout.Bytes()))
 			strCmdOutput = strings.ReplaceAll(strCmdOutput, "SERIALNUMBER", "")
-			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\r", "")
+			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\r", "\n")
 			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\n", "")
 			strCmdOutput = strings.Trim(strCmdOutput, " ")
 			serialNumber = strCmdOutput
