@@ -26,7 +26,7 @@ func init() {
 	} else {
 		APPROOT = dir
 	}
-	log.Println("APPROOT: ", APPROOT)
+
 	Hinfo = DefaultHostinfo()
 
 }
@@ -55,6 +55,8 @@ func DefaultHostinfo() *Hostinfo {
 }
 
 func WalkOneByOne() {
+	Echo("APPROOT", APPROOT)
+
 	SetKey()
 	SetTags()
 	GetHost()
@@ -71,8 +73,8 @@ func WalkOneByOne() {
 	if err != nil {
 		miscPath = filepath.Join(APPROOT, "misc")
 	}
-	//LoadMiscDir(miscPath)
-	LoadMiscDirV2(miscPath)
+	LoadMiscDir(miscPath)
+	//LoadMiscDirV2(miscPath)
 
 	jsonHinfo, err := json.Marshal(Hinfo)
 	if err != nil {
@@ -84,14 +86,15 @@ func WalkOneByOne() {
 		if err != nil {
 			log.Println(err)
 		} else {
-			log.Println("OK. Result was saved in: ", File)
+			fabs, _ := filepath.Abs(File)
+			Echo("OK. Save to File", fabs)
 		}
 	}
 }
 
 func Echo(title string, t interface{}) {
-	log.Println("=======", title, "=======")
 	if Quiet != true {
+		log.Println("=======", title, "=======")
 		log.Println(t)
 	}
 }
@@ -155,7 +158,16 @@ func LoadMiscDirV2(pth string) error {
 }
 
 func LoadMiscDir(pth string) error {
-	Echo("LoadMiscDir", pth)
+	miscNotice := `INFO: user can put "gohostinfo.user.***.json" file in "misc" folder 
+	to customize Key = Value. You have to keep the json format string in *ONLY* one line,
+	format(josn) should be like : 
+	{"key1":[{"k11":"val11"},{"k12":"val12"}],"key2":[{"k21":"val21"}]}
+	they will be added into final result:
+	  result["data"]["key1"]=[{"k11":"val11"},{"k12":"val12"}]
+	  result["data"]["key2"]=[{"k21":"val21"}]
+	`
+	Echo("LoadMiscDir", miscNotice)
+
 	err := filepath.Walk(pth, func(pth string, f os.FileInfo, err error) error {
 		if f == nil {
 			return err
@@ -163,33 +175,38 @@ func LoadMiscDir(pth string) error {
 		if f.IsDir() {
 			return nil
 		}
-		if filepath.Ext(pth) != ".txt" {
+		if filepath.Ext(pth) != ".json" {
 			return nil
 		}
 
-		if strings.Index(filepath.Base(pth), "gohostinfo") == -1 {
+		if strings.Index(filepath.Base(pth), "gohostinfo.user.") == -1 {
 			return nil
 		}
-		log.Println("checking: ", pth)
-		cnt, err := ioutil.ReadFile(pth)
+
+		Echo("Checking misc folder", pth)
+		fpth, err := os.Open(pth)
+		if err != nil {
+			log.Println(pth, err)
+			return err
+		}
+		defer fpth.Close()
+
+		cnt, err := ioutil.ReadAll(fpth)
 		if err != nil {
 			log.Println(err)
 		}
-		content := strings.ReplaceAll(string(cnt), "\r\n", "\n")
-		lines := strings.Split(content, "\n")
-		for i, line := range lines {
-			kv := strings.Split(line, "=")
-			if len(kv) == 2 {
-				if kv[0] != "" {
-					log.Println(i, ")", kv[0], " = ", kv[1])
-					k := strings.Trim(kv[0], " ")
-					v := strings.Trim(kv[1], " ")
-					if strings.Index(k, "#") == 0 {
-						continue
-					}
-					Hinfo.Data[k] = v
-				}
-			}
+
+		var data map[string][]map[string]interface{}
+
+		err = json.Unmarshal(cnt, &data)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		for key, val := range data {
+			Echo("Load Key", key)
+			Hinfo.Data[key] = val
 		}
 
 		return nil
@@ -236,7 +253,7 @@ func GetHost() {
 	Hinfo.ID = strings.ToLower(strings.Join([]string{"gohostinfo", h.Hostname}, "-"))
 	Hinfo.Data["host"] = h
 
-	log.Println(Hinfo.ID)
+	Echo("Get Hostname", Hinfo.ID)
 	Echo("Host", h)
 }
 
@@ -277,7 +294,7 @@ func GetDisk() {
 	Hinfo.Data["disk_full"] = almostFullDisks
 
 	Echo("Disk", diskStat)
-	log.Println(almostFullDisks)
+	Echo("Disk Almost Full", almostFullDisks)
 }
 
 func GetNet() {
