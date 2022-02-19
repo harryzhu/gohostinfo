@@ -17,7 +17,10 @@ import (
 	"github.com/shirou/gopsutil/v3/net"
 )
 
-var APPROOT string = "."
+var (
+	APPROOT string = "."
+	Hinfo   *Hostinfo
+)
 
 func init() {
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
@@ -40,10 +43,6 @@ type Hostinfo struct {
 	Data  map[string]interface{} `json:"data"`
 }
 
-var (
-	Hinfo *Hostinfo
-)
-
 func DefaultHostinfo() *Hostinfo {
 	return &Hostinfo{
 		ID:    "pls-set-your-key",
@@ -58,7 +57,7 @@ func DefaultHostinfo() *Hostinfo {
 func WalkOneByOne() {
 	Echo("APPROOT", APPROOT)
 
-	SetKey()
+	SetKeys()
 	SetTags()
 	GetHost()
 	GetCPU()
@@ -157,7 +156,7 @@ func LoadMiscDir(pth string) error {
 	return err
 }
 
-func SetKey() {
+func SetKeys() {
 	Hinfo.IDC = strings.ToLower(IDC)
 	Hinfo.Group = strings.ToLower(Group)
 }
