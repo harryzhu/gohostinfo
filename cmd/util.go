@@ -56,8 +56,8 @@ func DefaultHostinfo() *Hostinfo {
 func WalkOneByOne() {
 	Echo("APPROOT", APPROOT)
 
-	SetKeys()
-	SetTags()
+	GetKeys()
+	GetTags()
 	GetHost()
 	GetCPU()
 	GetMemory()
@@ -71,7 +71,7 @@ func WalkOneByOne() {
 	if _, err := os.Stat(miscDir); err != nil {
 		miscDir = filepath.Join(APPROOT, "misc")
 	}
-	LoadMiscDir(miscDir)
+	GetMiscDir(miscDir)
 
 	if jsonHinfo, err := json.Marshal(Hinfo); err != nil {
 		log.Println(err)
@@ -92,7 +92,7 @@ func Echo(title string, t interface{}) {
 	}
 }
 
-func LoadMiscDir(pth string) error {
+func GetMiscDir(pth string) error {
 	miscNotice := `INFO: user can put "gohostinfo.user.***.json" file in "misc" folder 
 	to customize Key = Value. You have to keep the json format string in *ONLY* one line,
 	format(josn) should be like : 
@@ -152,12 +152,12 @@ func LoadMiscDir(pth string) error {
 	return err
 }
 
-func SetKeys() {
+func GetKeys() {
 	Hinfo.IDC = strings.ToLower(IDC)
 	Hinfo.Group = strings.ToLower(Group)
 }
 
-func SetTags() {
+func GetTags() {
 	var arrTags []string
 	if Tags != "" {
 		Tags = strings.ReplaceAll(Tags, ",", ";")
