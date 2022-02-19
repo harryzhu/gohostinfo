@@ -1,11 +1,14 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -58,6 +61,7 @@ func WalkOneByOne() {
 
 	GetKeys()
 	GetTags()
+	GetSerialNumber()
 	GetHost()
 	GetCPU()
 	GetMemory()
@@ -247,5 +251,44 @@ func GetDocker() {
 		Hinfo.Data["docker"] = dkrs
 		Echo("Docker", dkrs)
 	}
+
+}
+
+func GetSerialNumber() {
+	plt := runtime.GOOS
+	log.Println(plt)
+	var cmdOutput *exec.Cmd
+	var serialNumber string
+	switch plt {
+	case "windows":
+		cmdOutput = exec.Command("wmic", "baseboard", "get", "serialnumber")
+	case "darwin":
+
+		c1 := exec.Command("system_profiler", "SPHardwareDataType")
+		c2 := exec.Command("grep", "Serial")
+		c2.Stdin, _ = c1.StdoutPipe()
+		var stdout, stderr bytes.Buffer
+		c2.Stdout = &stdout
+		c2.Stderr = &stderr
+		c2run := c2.Start()
+		c1.Run()
+		c2.Wait()
+
+		if c2run == nil {
+			strOut := string(stdout.Bytes())
+			if strOut != "" {
+				arrStrOut := strings.Split(strOut, ":")
+				if len(arrStrOut) == 2 {
+					serialNumber = strings.Trim(arrStrOut[1], " ")
+					log.Println(serialNumber)
+				}
+			}
+		}
+
+	default:
+		log.Println("cannot detect the platform")
+	}
+
+	log.Println(cmdOutput)
 
 }
