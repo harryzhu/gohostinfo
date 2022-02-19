@@ -268,17 +268,10 @@ func GetSerialNumber() {
 		if c1run == nil {
 			strCmdOutput := strings.ToUpper(string(stdout.Bytes()))
 			strCmdOutput = strings.ReplaceAll(strCmdOutput, "SERIALNUMBER", "")
-			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\r\n", "")
+			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\r", "")
 			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\n", "")
-			log.Println(strCmdOutput)
-			arrCmdOutput := strings.Split(strCmdOutput, "\n")
-
-			for _, v := range arrCmdOutput {
-				if v != "" && len(v) > 3 {
-					serialNumber = v
-					break
-				}
-			}
+			strCmdOutput = strings.Trim(strCmdOutput, " ")
+			serialNumber = strCmdOutput
 		}
 
 	case "darwin":
