@@ -269,7 +269,6 @@ func GetSerialNumber() {
 			strCmdOutput = strings.ReplaceAll(strCmdOutput, "SERIALNUMBER", "")
 			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\r", "\n")
 			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\n", "")
-			strCmdOutput = strings.Trim(strCmdOutput, "\n")
 			strCmdOutput = strings.Trim(strCmdOutput, " ")
 			serialNumber = strCmdOutput
 		}
@@ -311,6 +310,7 @@ func GetSerialNumber() {
 			if strOut != "" {
 				arrStrOut := strings.Split(strOut, ":")
 				if len(arrStrOut) == 2 {
+					arrStrOut[1] = strings.Trim(arrStrOut[1], "\n")
 					serialNumber = strings.Trim(arrStrOut[1], " ")
 					log.Println(serialNumber)
 				}
@@ -321,6 +321,7 @@ func GetSerialNumber() {
 		log.Println("cannot detect the platform")
 	}
 
+	serialNumber = strings.Trim(serialNumber, "\n")
 	serialNumber = strings.Trim(serialNumber, " ")
 
 	if serialNumber != "" {
