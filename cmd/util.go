@@ -290,7 +290,6 @@ func GetSerialNumber() {
 				arrStrOut := strings.Split(strOut, ":")
 				if len(arrStrOut) == 2 {
 					serialNumber = strings.Trim(arrStrOut[1], " ")
-					log.Println(serialNumber)
 				}
 			}
 		}
