@@ -100,7 +100,6 @@ func GetMiscDir(pth string) error {
 	they will be added into final result:
 	  result["data"]["key1"]=[{"k11":"val11"},{"k12":"val12"}]
 	  result["data"]["key2"]=[{"k21":"val21"}]`
-
 	Echo("LoadMiscDir", miscNotice)
 
 	err := filepath.Walk(pth, func(pth string, f os.FileInfo, err error) error {
@@ -136,6 +135,7 @@ func GetMiscDir(pth string) error {
 		err = json.Unmarshal(cnt, &data)
 		if err != nil {
 			log.Println(err)
+			log.Println(`should be one-line-string in json format: {"key1":[{"k11":"val11"},{"k12":"val12"}],"key2":[{"k21":"val21"}]}`)
 			return err
 		}
 
