@@ -311,7 +311,6 @@ func GetSerialNumber() {
 				if len(arrStrOut) == 2 {
 					arrStrOut[1] = strings.Trim(arrStrOut[1], "\n")
 					serialNumber = strings.Trim(arrStrOut[1], " ")
-					log.Println(serialNumber)
 				}
 			}
 		}
