@@ -326,6 +326,12 @@ func GetSerialNumber() {
 		log.Println("cannot detect the platform")
 	}
 
-	log.Println("--", serialNumber)
+	serialNumber = strings.Trim(serialNumber, " ")
 
+	if serialNumber != "" {
+		Hinfo.Data["sn"] = serialNumber
+		Echo("Serial Number", serialNumber)
+	} else {
+		log.Println("cannot get the Serial Number")
+	}
 }
