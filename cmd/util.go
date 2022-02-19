@@ -268,7 +268,9 @@ func GetSerialNumber() {
 		if c1run == nil {
 			strCmdOutput := strings.ToUpper(string(stdout.Bytes()))
 			strCmdOutput = strings.ReplaceAll(strCmdOutput, "SERIALNUMBER", "")
-			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\r\n", "\n")
+			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\r\n", "")
+			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\n", "")
+			log.Println(strCmdOutput)
 			arrCmdOutput := strings.Split(strCmdOutput, "\n")
 
 			for _, v := range arrCmdOutput {
