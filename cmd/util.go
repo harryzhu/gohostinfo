@@ -269,6 +269,7 @@ func GetSerialNumber() {
 			strCmdOutput = strings.ReplaceAll(strCmdOutput, "SERIALNUMBER", "")
 			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\r", "\n")
 			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\n", "")
+			strCmdOutput = strings.Trim(strCmdOutput, "\n")
 			strCmdOutput = strings.Trim(strCmdOutput, " ")
 			serialNumber = strCmdOutput
 		}
