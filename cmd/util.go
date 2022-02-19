@@ -332,6 +332,7 @@ func GetSerialNumber() {
 		Hinfo.Data["sn"] = serialNumber
 		Echo("Serial Number", serialNumber)
 	} else {
+		Hinfo.Data["sn"] = ""
 		log.Println("cannot get the Serial Number")
 	}
 }
