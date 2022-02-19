@@ -300,6 +300,27 @@ func GetSerialNumber() {
 				}
 			}
 		}
+	case "linux":
+		c1 := exec.Command("dmidecode", "-t", "system")
+		c2 := exec.Command("grep", "Serial")
+		c2.Stdin, _ = c1.StdoutPipe()
+		var stdout, stderr bytes.Buffer
+		c2.Stdout = &stdout
+		c2.Stderr = &stderr
+		c2run := c2.Start()
+		c1.Run()
+		c2.Wait()
+
+		if c2run == nil {
+			strOut := string(stdout.Bytes())
+			if strOut != "" {
+				arrStrOut := strings.Split(strOut, ":")
+				if len(arrStrOut) == 2 {
+					serialNumber = strings.Trim(arrStrOut[1], " ")
+					log.Println(serialNumber)
+				}
+			}
+		}
 
 	default:
 		log.Println("cannot detect the platform")
