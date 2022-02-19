@@ -23,8 +23,7 @@ var (
 )
 
 func init() {
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
+	if dir, err := filepath.Abs(filepath.Dir(os.Args[0])); err != nil {
 		log.Println(err)
 	} else {
 		APPROOT = dir
@@ -69,18 +68,15 @@ func WalkOneByOne() {
 	}
 
 	miscPath := "misc"
-	_, err := os.Stat(miscPath)
-	if err != nil {
+	if _, err := os.Stat(miscPath); err != nil {
 		miscPath = filepath.Join(APPROOT, "misc")
 	}
 	LoadMiscDir(miscPath)
 
-	jsonHinfo, err := json.Marshal(Hinfo)
-	if err != nil {
+	if jsonHinfo, err := json.Marshal(Hinfo); err != nil {
 		log.Println(err)
 	} else {
-		err := ioutil.WriteFile(File, jsonHinfo, 0755)
-		if err != nil {
+		if err := ioutil.WriteFile(File, jsonHinfo, 0755); err != nil {
 			log.Println(err)
 		} else {
 			fabs, _ := filepath.Abs(File)
@@ -184,16 +180,14 @@ func SetTags() {
 }
 
 func GetHost() {
-	h, err := host.Info()
-	if err != nil {
+	if h, err := host.Info(); err != nil {
 		log.Fatal("cannot get the hostname, will abort")
+	} else {
+		Hinfo.ID = strings.ToLower(strings.Join([]string{"gohostinfo", h.Hostname}, "-"))
+		Hinfo.Data["host"] = h
+
+		Echo("Host", h)
 	}
-
-	Hinfo.ID = strings.ToLower(strings.Join([]string{"gohostinfo", h.Hostname}, "-"))
-	Hinfo.Data["host"] = h
-
-	Echo("Get Hostname", Hinfo.ID)
-	Echo("Host", h)
 }
 
 func GetMemory() {
@@ -237,23 +231,21 @@ func GetDisk() {
 }
 
 func GetNet() {
-	i, err := net.Interfaces()
-	if err != nil {
+	if ifc, err := net.Interfaces(); err != nil {
 		log.Println(err)
+	} else {
+		Hinfo.Data["net"] = ifc
+		Echo("Net", ifc)
 	}
 
-	Hinfo.Data["net"] = i
-
-	Echo("Net", i)
 }
 
 func GetDocker() {
-	dkrs, err := docker.GetDockerStat()
-	if err != nil {
+	if dkrs, err := docker.GetDockerStat(); err != nil {
 		log.Println(err)
+	} else {
+		Hinfo.Data["docker"] = dkrs
+		Echo("Docker", dkrs)
 	}
 
-	Hinfo.Data["docker"] = dkrs
-
-	Echo("Docker", dkrs)
 }
