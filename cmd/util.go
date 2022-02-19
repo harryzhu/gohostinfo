@@ -67,11 +67,11 @@ func WalkOneByOne() {
 		GetDocker()
 	}
 
-	miscPath := "misc"
-	if _, err := os.Stat(miscPath); err != nil {
-		miscPath = filepath.Join(APPROOT, "misc")
+	miscDir := "misc"
+	if _, err := os.Stat(miscDir); err != nil {
+		miscDir = filepath.Join(APPROOT, "misc")
 	}
-	LoadMiscDir(miscPath)
+	LoadMiscDir(miscDir)
 
 	if jsonHinfo, err := json.Marshal(Hinfo); err != nil {
 		log.Println(err)
@@ -80,7 +80,7 @@ func WalkOneByOne() {
 			log.Println(err)
 		} else {
 			fabs, _ := filepath.Abs(File)
-			Echo("OK. Save to File", fabs)
+			Echo("[OK] Save to File", fabs)
 		}
 	}
 }
