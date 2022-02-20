@@ -254,6 +254,18 @@ func GetDocker() {
 
 }
 
+func formatSerialNumber(s string) string {
+	s = strings.ToUpper(s)
+	s = strings.ReplaceAll(s, "SERIAL", "")
+	s = strings.ReplaceAll(s, "NUMBER", "")
+	s = strings.ReplaceAll(s, "\r", "")
+	s = strings.ReplaceAll(s, "\n", "")
+	s = strings.ReplaceAll(s, "\r\n", "")
+	s = strings.Trim(s, "\n")
+	s = strings.Trim(s, " ")
+	return s
+}
+
 func GetSerialNumber() {
 	plt := runtime.GOOS
 	var serialNumber string
@@ -265,12 +277,7 @@ func GetSerialNumber() {
 		c1.Stderr = &stderr
 		c1run := c1.Run()
 		if c1run == nil {
-			strCmdOutput := strings.ToUpper(string(stdout.Bytes()))
-			strCmdOutput = strings.ReplaceAll(strCmdOutput, "SERIALNUMBER", "")
-			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\r", "\n")
-			strCmdOutput = strings.ReplaceAll(strCmdOutput, "\n", "")
-			strCmdOutput = strings.Trim(strCmdOutput, " ")
-			serialNumber = strCmdOutput
+			serialNumber = formatSerialNumber(string(stdout.Bytes()))
 		}
 
 	case "darwin":
@@ -289,7 +296,7 @@ func GetSerialNumber() {
 			if strOut != "" {
 				arrStrOut := strings.Split(strOut, ":")
 				if len(arrStrOut) == 2 {
-					serialNumber = strings.Trim(arrStrOut[1], " ")
+					serialNumber = formatSerialNumber(arrStrOut[1])
 				}
 			}
 		}
@@ -309,8 +316,7 @@ func GetSerialNumber() {
 			if strOut != "" {
 				arrStrOut := strings.Split(strOut, ":")
 				if len(arrStrOut) == 2 {
-					arrStrOut[1] = strings.Trim(arrStrOut[1], "\n")
-					serialNumber = strings.Trim(arrStrOut[1], " ")
+					serialNumber = formatSerialNumber(arrStrOut[1])
 				}
 			}
 		}
@@ -318,9 +324,6 @@ func GetSerialNumber() {
 	default:
 		log.Println("cannot detect the platform")
 	}
-
-	serialNumber = strings.Trim(serialNumber, "\n")
-	serialNumber = strings.Trim(serialNumber, " ")
 
 	if serialNumber != "" {
 		Hinfo.Data["sn"] = serialNumber
