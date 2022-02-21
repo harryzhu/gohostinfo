@@ -208,7 +208,7 @@ func GetCPU() {
 	if WithCPUFlags != true {
 		for _, cv := range c {
 			log.Println(cv.Flags)
-			cv.Flags = []string{}
+			cv.Flags = []string{""}
 		}
 	}
 	Hinfo.Data["cpu"] = c
