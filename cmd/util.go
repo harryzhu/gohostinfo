@@ -206,8 +206,8 @@ func GetMemory() {
 func GetCPU() {
 	c, _ := cpu.Info()
 	if WithCPUFlags {
-		for _, vc := range c {
-			cv["flags"] = []string{}
+		for _, cv := range c {
+			cv.Flags = []string{}
 		}
 	}
 	Hinfo.Data["cpu"] = c
