@@ -11,12 +11,13 @@ import (
 )
 
 var (
-	IDC        string
-	WithDocker bool
-	File       string
-	Group      string
-	Tags       string
-	Quiet      bool
+	IDC          string
+	WithDocker   bool
+	WithCPUFlags bool
+	File         string
+	Group        string
+	Tags         string
+	Quiet        bool
 )
 
 // rootCmd represents the base command when called without any subcommands

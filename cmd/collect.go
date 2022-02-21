@@ -26,7 +26,7 @@ func init() {
 	collectCmd.Flags().StringVar(&Tags, "tags", "", "--tags=\"tag1;tag2;tag3\"")
 
 	collectCmd.Flags().BoolVar(&WithDocker, "with-docker", false, "--with-docker=true|false")
-
+	collectCmd.Flags().BoolVar(&WithCPUFlags, "with-cpu-flags", false, "--with-cpu-flags=true|false")
 	collectCmd.MarkFlagRequired("idc")
 
 }

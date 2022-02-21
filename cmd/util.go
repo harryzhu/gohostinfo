@@ -204,9 +204,18 @@ func GetMemory() {
 }
 
 func GetCPU() {
-	c, _ := cpu.Info()
-	Hinfo.Data["cpu"] = c
-	Echo("CPU", c)
+	cinfo, err := cpu.Info()
+	if err != nil {
+		log.Println(err)
+	} else {
+		for i, _ := range cinfo {
+			if WithCPUFlags == false {
+				cinfo[i].Flags = []string{}
+			}
+		}
+	}
+	Hinfo.Data["cpu"] = cinfo
+	Echo("CPU", cinfo)
 }
 
 func GetDisk() {
