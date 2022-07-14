@@ -205,6 +205,7 @@ func GetMemory() {
 
 func GetCPU() {
 	cinfo, err := cpu.Info()
+
 	if err != nil {
 		log.Println(err)
 	} else {
@@ -214,6 +215,7 @@ func GetCPU() {
 			}
 		}
 	}
+
 	Hinfo.Data["cpu"] = cinfo
 	Echo("CPU", cinfo)
 }
